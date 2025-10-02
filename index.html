@@ -62,13 +62,12 @@ input[type=text]{flex:1;padding:10px 12px;border-radius:10px;border:1px solid va
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 <script>
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCDmy7_z7ev713g0Dl6ZGk1LipNdb5H6dI",
+  authDomain: "lazoo-d9146.firebaseapp.com",
+  projectId: "lazoo-d9146",
+  storageBucket: "lazoo-d9146.firebasestorage.app",
+  messagingSenderId: "333373643981",
+  appId: "1:333373643981:web:d5c7cd191e41a9c6461d84"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -90,8 +89,6 @@ function render(){
   const listEl = document.getElementById("list");
   const countEl = document.getElementById("count");
   const empty = document.getElementById("empty");
-  const q = document.getElementById("q");
-  const sort = document.getElementById("sort");
 
   let visible = confessions;
   listEl.innerHTML='';
