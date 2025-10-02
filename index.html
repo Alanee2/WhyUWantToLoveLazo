@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>why u want to love lazo — confessions</title>
+  <meta name="description" content="Tiny confession app: tell why you want to love Lazo — anonymous, instant, saved locally." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Poppins:wght@600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-1: #071025; --bg-2:#0a0f1a; --card:#0f1724; --accent1:#7c3aed; --accent2:#06b6d4; --glass: rgba(255,255,255,0.03);
+      --muted:#9aa4b2; --radius:14px; --maxw:1100px; --glass-2: rgba(255,255,255,0.02);
+      --glass-border: rgba(255,255,255,0.04);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:Inter,system-ui,Arial; background:radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.12), transparent), radial-gradient(900px 400px at 90% 90%, rgba(6,182,212,0.08), transparent), linear-gradient(180deg,var(--bg-1),var(--bg-2)); color:#e6eef6; display:flex; align-items:center; justify-content:center; padding:28px;
+    }
+
+    .app{width:100%; max-width:var(--maxw); display:flex; gap:20px; align-items:flex-start}
+
+    /* Left column */
+    .panel{flex:1; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:var(--radius); padding:20px; box-shadow:0 10px 40px rgba(2,6,23,0.6); border:1px solid var(--glass-border);}
+
+    header{display:flex; align-items:center; gap:16px; margin-bottom:12px}
+    .logo{width:64px; height:64px; border-radius:12px; background:linear-gradient(135deg,var(--accent1),var(--accent2)); display:flex; align-items:center; justify-content:center; font-weight:800; font-family:Poppins,Inter; font-size:20px; color:white; box-shadow:0 8px 30px rgba(11,22,40,0.6)}
+    h1{margin:0; font-size:20px}
+    p.lead{margin:0; color:var(--muted); font-size:13px}
+
+    form textarea{width:100%; min-height:140px; resize:vertical; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); border:1px solid var(--glass-border); color:inherit; padding:14px; border-radius:12px; font-size:14px; line-height:1.45}
+    .row{display:flex; gap:10px; margin-top:12px}
+    input[type=text]{flex:1; padding:10px 12px; border-radius:10px; border:1px solid var(--glass-border); background:transparent; color:inherit}
+
+    .btn{background:linear-gradient(90deg,var(--accent2),var(--accent1)); border:none; padding:10px 14px; border-radius:12px; cursor:pointer; color:white; font-weight:700; letter-spacing:0.2px; box-shadow:0 8px 30px rgba(12,18,30,0.5); transition:transform .12s ease, box-shadow .12s ease}
+    .btn:active{transform:translateY(1px)}
+
+    .muted{color:var(--muted); font-size:13px}
+    .small{font-size:12px}
+
+    .meta-row{display:flex; gap:8px; align-items:center; margin-top:14px}
+    .pill{padding:6px 10px; border-radius:999px; background:var(--glass-2); border:1px solid var(--glass-border); font-size:13px}
+
+    /* Right column */
+    .sidebar{width:380px}
+    .searchbar{display:flex; gap:8px; align-items:center}
+    .searchbar input{flex:1; padding:10px 12px; border-radius:10px; border:1px solid var(--glass-border); background:transparent}
+    select{padding:10px 12px; border-radius:10px; border:1px solid var(--glass-border); background:transparent}
+
+    .list{margin-top:12px; display:grid; gap:12px; max-height:62vh; overflow:auto; padding-right:6px}
+    .conf{padding:12px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.02); display:flex; gap:10px; align-items:flex-start; transition:transform .12s ease, box-shadow .12s ease}
+    .conf:hover{transform:translateY(-6px); box-shadow:0 18px 40px rgba(2,6,23,0.5)}
+
+    .meta{display:flex; justify-content:space-between; gap:8px; font-size:12px; color:var(--muted)}
+    .actions{display:flex; gap:8px}
+    .icon-btn{background:transparent; border:1px solid var(--glass-border); padding:6px 8px; border-radius:10px; cursor:pointer}
+
+    .empty{color:var(--muted); text-align:center; padding:18px}
+
+    /* Modal */
+    .modal{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(2,6,23,0.6); z-index:60}
+    .modal-card{width:min(720px,95%); background:linear-gradient(180deg,#071026,#081225); padding:20px; border-radius:16px; border:1px solid var(--glass-border)}
+    .close{margin-left:auto}
+
+    /* tiny toasts */
+    .toast{position:fixed; right:20px; bottom:20px; background:linear-gradient(90deg,var(--accent1),var(--accent2)); color:#021; padding:10px 14px; border-radius:10px; box-shadow:0 8px 30px rgba(12,18,30,0.6)}
+
+    @media (max-width:980px){ .app{flex-direction:column} .sidebar{width:100%} }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="panel">
+      <header>
+        <div class="logo">LZ</div>
+        <div>
+          <h1>why u want to love lazo</h1>
+          <p class="lead">Confess anonymously. Polished UI, single-file. Stylish, mobile-friendly.</p>
+        </div>
+      </header>
+
+      <form id="confForm" autocomplete="off">
+        <label for="text"><strong>Your confession</strong></label>
+        <textarea id="text" placeholder="Why do you want to love Lazo? (hair, attitude, in-game...)"></textarea>
+
+        <div class="row">
+          <input id="author" type="text" placeholder="Nickname (optional)" />
+          <button class="btn" type="submit">Submit</button>
+        </div>
+
+        <div class="meta-row">
+          <div class="pill" id="count">0 confessions</div>
+          <div style="flex:1"></div>
+          <div style="display:flex; gap:8px">
+            <button id="exportBtn" type="button" class="icon-btn small">Export</button>
+            <button id="importBtn" type="button" class="icon-btn small">Import</button>
+          </div>
+        </div>
+      </form>
+
+      <div style="margin-top:18px; display:flex; gap:12px; align-items:center; justify-content:space-between">
+        <div class="muted small">Local storage — data stays in your browser.</div>
+        <div style="display:flex; gap:8px">
+          <button id="randomBtn" class="icon-btn small">Random Read</button>
+        </div>
+      </div>
+
+    </section>
+
+    <aside class="panel sidebar">
+      <div style="display:flex; gap:10px; align-items:center">
+        <div class="searchbar">
+          <input id="q" placeholder="Search..." />
+          <select id="sort">
+            <option value="new">New</option>
+            <option value="old">Old</option>
+            <option value="likes">Likes</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="list" class="list"></div>
+      <div id="empty" class="empty">No confessions yet. Be the first.</div>
+
+      <footer style="margin-top:12px; text-align:center; color:var(--muted); font-size:13px">
+        Want it meaner? I can go neon / brutal / minimal — pick one.
+      </footer>
+
+    </aside>
+  </main>
+
+  <!-- modal placeholder -->
+  <div id="modal" style="display:none" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <div style="display:flex; gap:10px; align-items:center">
+        <div style="font-weight:700">Details</div>
+        <button id="closeModal" class="icon-btn close">Close</button>
+      </div>
+      <div id="modalBody" style="margin-top:12px"></div>
+    </div>
+  </div>
+
+  <div id="toast" style="display:none" class="toast">Copied</div>
+
+  <script>
+    // single-file confession app (localStorage)
+    const LS_KEY = 'lazo_confessions_v1';
+    const form = document.getElementById('confForm');
+    const text = document.getElementById('text');
+    const author = document.getElementById('author');
+    const listEl = document.getElementById('list');
+    const countEl = document.getElementById('count');
+    const empty = document.getElementById('empty');
+    const q = document.getElementById('q');
+    const sort = document.getElementById('sort');
+    const modal = document.getElementById('modal');
+    const modalBody = document.getElementById('modalBody');
+    const toast = document.getElementById('toast');
+
+    function uid(){return Math.random().toString(36).slice(2,9)}
+    function now(){return Date.now()}
+
+    function load(){
+      try{return JSON.parse(localStorage.getItem(LS_KEY) || '[]')}catch(e){return []}
+    }
+    function save(arr){ localStorage.setItem(LS_KEY, JSON.stringify(arr)) }
+
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, ch=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;" })[ch]) }
+
+    function render(){
+      const all = load();
+      const query = q.value.trim().toLowerCase();
+      let visible = all.filter(c => c.text.toLowerCase().includes(query) || (c.author||'').toLowerCase().includes(query));
+      if(sort.value==='new') visible.sort((a,b)=>b.ts-a.ts)
+      if(sort.value==='old') visible.sort((a,b)=>a.ts-b.ts)
+      if(sort.value==='likes') visible.sort((a,b)=>b.likes-a.likes)
+      listEl.innerHTML='';
+      if(visible.length===0){ empty.style.display='block'; countEl.textContent = all.length + ' confessions'; return }
+      empty.style.display='none';
+
+      for(const c of visible){
+        const el = document.createElement('div'); el.className='conf';
+        el.innerHTML = `
+          <div style="flex:1">
+            <div class="meta"><strong>${escapeHtml(c.author||'anon')}</strong><span>${new Date(c.ts).toLocaleString()}</span></div>
+            <div style="margin-top:8px; white-space:pre-wrap">${escapeHtml(c.text)}</div>
+            <div style="margin-top:10px; display:flex; gap:8px; align-items:center">
+              <button class="icon-btn" data-id="${c.id}" data-like>❤ ${c.likes||0}</button>
+              <button class="icon-btn" data-id="${c.id}" data-copy>Copy</button>
+              <button class="icon-btn" data-id="${c.id}" data-view>View</button>
+              <button class="icon-btn" data-id="${c.id}" data-del>Delete</button>
+            </div>
+          </div>
+        `;
+        listEl.appendChild(el);
+      }
+      countEl.textContent = all.length + ' confessions';
+    }
+
+    form.addEventListener('submit', e=>{
+      e.preventDefault();
+      const t = text.value.trim(); if(!t){ alert('Confession cannot be empty'); return }
+      const arr = load();
+      arr.push({ id: uid(), text: t, author: author.value.trim(), ts: now(), likes: 0 });
+      save(arr); text.value=''; author.value=''; render();
+    })
+
+    listEl.addEventListener('click', e=>{
+      const btn = e.target.closest('button'); if(!btn) return; const id = btn.dataset.id; const arr = load();
+      if(btn.hasAttribute('data-like')){ const it = arr.find(x=>x.id===id); if(it){ it.likes = (it.likes||0)+1; save(arr); render(); flashToast('Liked') } }
+      if(btn.hasAttribute('data-del')){ if(!confirm('Delete this confession?')) return; const n = arr.filter(x=>x.id!==id); save(n); render(); flashToast('Deleted') }
+      if(btn.hasAttribute('data-copy')){ const it = arr.find(x=>x.id===id); if(it){ navigator.clipboard?.writeText(`${it.author||'anon'}: ${it.text}`); flashToast('Copied') } }
+      if(btn.hasAttribute('data-view')){ const it = arr.find(x=>x.id===id); if(it){ modalBody.innerHTML = `<div class="meta"><strong>${escapeHtml(it.author||'anon')}</strong><span>${new Date(it.ts).toLocaleString()}</span></div><div style="margin-top:8px; white-space:pre-wrap">${escapeHtml(it.text)}</div>`; modal.style.display='flex' } }
+    })
+
+    document.getElementById('randomBtn').addEventListener('click', ()=>{ const arr = load(); if(!arr.length){ alert('No confessions yet'); return } const r = arr[Math.floor(Math.random()*arr.length)]; modalBody.innerHTML = `<div class="meta"><strong>${escapeHtml(r.author||'anon')}</strong><span>${new Date(r.ts).toLocaleString()}</span></div><div style="margin-top:8px; white-space:pre-wrap">${escapeHtml(r.text)}</div>`; modal.style.display='flex' })
+
+    q.addEventListener('input', render); sort.addEventListener('change', render);
+
+    document.getElementById('exportBtn').addEventListener('click', ()=>{ const data = localStorage.getItem(LS_KEY) || '[]'; const blob = new Blob([data], {type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'lazo-confessions.json'; a.click(); URL.revokeObjectURL(url); flashToast('Exported') })
+    document.getElementById('importBtn').addEventListener('click', ()=>{ const inp = document.createElement('input'); inp.type='file'; inp.accept='application/json'; inp.onchange = async ()=>{ const f = inp.files[0]; if(!f) return; try{ const txt = await f.text(); JSON.parse(txt); localStorage.setItem(LS_KEY, txt); render(); flashToast('Imported') }catch(e){ alert('Invalid file') } }; inp.click(); })
+
+    document.getElementById('closeModal').addEventListener('click', ()=>{ modal.style.display='none' })
+
+    function flashToast(txt){ toast.textContent = txt; toast.style.display='block'; setTimeout(()=>{ toast.style.opacity = '1' },10); setTimeout(()=>{ toast.style.opacity='0'; setTimeout(()=>toast.style.display='none',260) },1400) }
+
+    // initial render
+    render();
+  </script>
+</body>
+</html>
